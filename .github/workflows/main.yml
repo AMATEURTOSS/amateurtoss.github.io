@@ -33,10 +33,12 @@ jobs:
         git config user.email github-actions@github.com
         git switch --orphan release
         mv dist/* .
+
+        # gitignore 파일들 제거
         rmdir dist
-        ls
-        
-        # 변경사항을 커밋 및 푸시
-        # git add .
-        # git commit -m "Release build from main branch"
-        # git push origin release --force
+        rm -rf node_modules
+        rm next-env.d.ts
+
+        git add .
+        git commit -m "Release build from main branch"
+        git push origin release --force
