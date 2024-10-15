@@ -37,6 +37,7 @@ jobs:
         # gitignore 파일들 제거
         rmdir dist
         rm -rf node_modules
+        rm -rf .next
         rm next-env.d.ts
 
         git add .
