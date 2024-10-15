@@ -25,12 +25,12 @@ export const portfolios: Post[] = [
     createdAt: '2023.03 - 2024.11',
     href: '/portfolios/4'
   },
-  {
-    title: 'Get From Korea',
-    description: '한국 상품을 더 쉽게 직구할 수 있도록 도와주는 직구 대행 서비스',
-    createdAt: '2022.09 - 2023.02',
-    href: '/portfolios/3'
-  },
+  // {
+  //   title: 'Get From Korea',
+  //   description: '한국 상품을 더 쉽게 직구할 수 있도록 도와주는 직구 대행 서비스',
+  //   createdAt: '2022.09 - 2023.02',
+  //   href: '/portfolios/3'
+  // },
   {
     title: '트채통',
     description: '스트리밍중인 트위치 방송의 각종 채팅관련 통계를 보여주는 서비스',
