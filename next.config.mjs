@@ -12,8 +12,7 @@ const nextConfig = {
   output: 'export',
   distDir: 'dist',
   pageExtensions: ['tsx', 'mdx'],
-  trailingSlash: true,
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://amateurtoss.github.io' : ''
+  assetPrefix: process.env.NODE_ENV === 'production' ? '.' : ''
 }
 
 export default withMdx(nextConfig)
