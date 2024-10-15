@@ -1,6 +1,11 @@
-import nextMdx from '@next/mdx'
+import remarkGfm from 'remark-gfm'
+import createMDX from '@next/mdx'
 
-const withMdx = nextMdx()
+const withMdx = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
