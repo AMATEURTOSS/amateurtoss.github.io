@@ -4,7 +4,7 @@ import { Header } from '@/components/header'
 
 export default function Portfolios() {
   return (
-    <div className='prose container flex flex-col items-center min-h-screen mx-auto py-8'>
+    <div className='container flex flex-col items-center min-h-screen mx-auto py-8'>
       <Header />
       <main>
         <article>
