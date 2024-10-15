@@ -1,23 +1,11 @@
-import Link from 'next/link'
 import { posts } from '@/db'
 import { Post } from '@/components/post'
+import { Header } from '@/components/header'
 
 export default function Home() {
   return (
     <div className='prose container flex flex-col items-center min-h-screen mx-auto py-8'>
-      <header className='flex items-center gap-2 font-medium'>
-        <Link href='https://github.com/AMATEURTOSS' target='_blank' rel='noreferrer'>
-          blog
-        </Link>
-        {'/'}
-        <Link href='https://github.com/AMATEURTOSS' target='_blank' rel='noreferrer'>
-          github
-        </Link>
-        {'/'}
-        <Link href='/portfolios' target='_blank' rel='noreferrer'>
-          portfolio
-        </Link>
-      </header>
+      <Header />
       <main>
         <article>
           <h2>posts</h2>
