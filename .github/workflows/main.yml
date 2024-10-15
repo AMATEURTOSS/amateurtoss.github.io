@@ -39,6 +39,8 @@ jobs:
         
         # release 브랜치로 체크아웃 (새로 만듦)
         git switch --orphan release
+        echo "checked out"
+        ls
         
         # dist 폴더의 내용을 release 브랜치로 복사
         git checkout temp-branch -- dist
