@@ -40,6 +40,9 @@ jobs:
         rm -rf .next
         rm next-env.d.ts
 
+        # _next 디렉토리가 무시되는 버그 수정을 위해 jeklly 비활성화
+        touch .nojekyll
+
         git add .
         git commit -m "Release build from main branch"
         git push origin release --force
