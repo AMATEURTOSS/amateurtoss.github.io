@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { posts } from '@/db'
+import { portfolios } from '@/db'
 import { Post } from '@/components/post'
 
-export default function Home() {
+export default function Portfolios() {
   return (
     <div className='prose container flex flex-col items-center min-h-screen mx-auto py-8'>
       <header className='flex items-center gap-2 font-medium'>
@@ -20,10 +20,10 @@ export default function Home() {
       </header>
       <main>
         <article>
-          <h2>posts</h2>
+          <h2>portfolios</h2>
           <ul>
             {
-              posts.map((post) => (
+              portfolios.map((post) => (
                 <Post key={post.href} {...post} />
               ))
             }
