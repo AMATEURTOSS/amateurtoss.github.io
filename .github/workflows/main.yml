@@ -31,23 +31,12 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        
-        # 현재 브랜치에 dist 추가 및 임시 브랜치로 이동
-        git checkout -b temp-branch
-        git add -f dist/*
-        git commit -m "temp"
-        
-        # release 브랜치로 체크아웃 (새로 만듦)
         git switch --orphan release
-        echo "checked out"
-        ls
-        
-        # dist 폴더의 내용을 release 브랜치로 복사
-        git checkout temp-branch -- dist
         mv dist/* .
         rmdir dist
+        ls
         
         # 변경사항을 커밋 및 푸시
-        git add .
-        git commit -m "Release build from main branch"
-        git push origin release --force
+        # git add .
+        # git commit -m "Release build from main branch"
+        # git push origin release --force
