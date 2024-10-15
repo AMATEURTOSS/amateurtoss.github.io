@@ -33,8 +33,9 @@ jobs:
         git config user.email github-actions@github.com
         git checkout --orphan release
         git rm -rf .
+        rm -rf -- !(dist)
         mv dist/* .
-        rm -rf dist
+        rmdir dist
         git add .
         git commit -m "Release build from main branch"
         git push origin release --force
