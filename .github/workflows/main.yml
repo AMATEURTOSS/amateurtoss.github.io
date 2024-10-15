@@ -33,9 +33,9 @@ jobs:
         git config user.email github-actions@github.com
         
         # 현재 브랜치에 dist 추가 및 임시 브랜치로 이동
-        git add dist/*
-        git commit -m "temp"
         git checkout -b temp-branch
+        git add -f dist/*
+        git commit -m "temp"
         
         # release 브랜치로 체크아웃 (새로 만듦)
         git switch --orphan release
