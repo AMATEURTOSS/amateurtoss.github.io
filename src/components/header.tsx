@@ -3,7 +3,7 @@ import Link from 'next/link'
 export function Header () {
   return (
     <header className='flex items-center gap-2 font-medium'>
-      <Link href='https://github.com/AMATEURTOSS'>
+      <Link href='/'>
         blog
       </Link>
       {'/'}
