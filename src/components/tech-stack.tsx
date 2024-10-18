@@ -36,7 +36,7 @@ export function TechStack ({ name, stack }: TechStackProps) {
     <ul>
       <li>{name}</li>
       <ol>
-        <li className='flex gap-1'>
+        <li className='flex gap-1 flex-wrap'>
           {
             stack.map((tech) => <img key={tech} src={IconLinkMap[tech]} alt={tech} className='m-0'/>)
           }
