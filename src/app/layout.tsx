@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='kr'>
-      <body className='font-mono'>
+      <body className='font-wanted'>
         {children}
       </body>
     </html>
