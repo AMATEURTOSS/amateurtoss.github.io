@@ -4,6 +4,7 @@
     "semi": ["error", "never"],
     "quotes": ["error", "single"],
     "jsx-quotes": ["error", "prefer-single"],
+    "object-curly-spacing": ["error", "always"],
     "@next/next/no-img-element": "off"
   }
 }
