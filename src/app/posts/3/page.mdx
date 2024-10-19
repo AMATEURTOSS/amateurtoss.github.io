@@ -1,0 +1,97 @@
+# Node.js, 싱글 스레드 약점 극복하기 (PM2)
+
+Node.js가 싱글 스레드에서 동작한다는 사실은 많은 분들이 알고 계시는 사실입니다.
+
+싱글 코어 성능의 향상이 점점 더뎌지고, 그를 극복하기 위해 CPU 제조사들이 멀티코어를 밀고 있는 현재,
+싱글 코어만을 활용할 수 있다는 점은 실행환경의 치명적 약점으로 볼 수 있습니다.
+
+그러면 Node.js는 프로토타입을 제작할 때만 사용하고, 트래픽이 높아지면 다른 언어로 갈아타야 하는 걸까요?
+
+다행히도, Node.js는 싱글 스레드 실행환경이지만 이를 극복할 수 있는 방안이 몇가지 있습니다.
+
+1. PM2 활용
+2. worker_thread 활용
+
+이번 글에서는 PM2를 활용해서 Node.js가 더 많은 CPU 코어를 활용할 수 있도록 하는 방법을 소개해드리겠습니다.
+
+## PM2
+
+[PM2](https://pm2.keymetrics.io)는 자바스크립트로 작성된 프로세스 관리 도구입니다.
+프로세스 모니터링, 재시작, 로깅 등 다양한 유용한 기능을 제공하지만, 이 글에서 주목할 부분은 **클러스터 모드**입니다.
+
+## PM2의 클러스터 모드
+
+PM2의 공식문서에서는 클러스터 모드에 대해 아래와 같이 설명하고 있습니다.
+
+> The cluster mode allows networked Node.js applications (http(s)/tcp/udp server) to be scaled across all CPUs available,
+> without any code modifications. This greatly increases the performance and reliability of your applications,
+> depending on the number of CPUs available.
+
+클러스터 모드는 [Node.js의 클러스터 API](https://nodejs.org/api/cluster.html)를 사용해 같은 포트를 공유하는 프로세스를 여러개 만들어주는 기능입니다.
+하나의 프로세스가 병렬성을 가지지 못하니, 여러개의 프로세스를 만들어서 부하 분산을 시켜주는 개념이라고 보시면 됩니다.
+
+PM2의 클러스터 모드를 사용하려면 pm2를 실행할 때 -i 옵션을 주면 됩니다.
+-i 옵션 뒤의 max는 cpu의 수 만큼의 프로세스를 생성하겠다는 의미로, 직접 프로세스의 수를 조정하고 싶으면 max 대신 숫자를 집어넣으면 됩니다.
+
+```shell
+pm2 start server.js -i max
+# 또는
+# pm2 start server.js -i 42
+```
+
+## 단일 프로세스와 클러스터 모드의 성능 비교
+
+성능 비교를 위해 express로 간단하게 hello world를 반환하는 스크립트를 만들어 [28코어 56스레드 서버](/posts/2)에 올리고, 벤치마킹 툴인 wrk로 비교해봤습니다.
+
+### 벤치마크 비교 표
+
+|         | 단일 프로세스     | 클러스터 모드      |
+|---------|-------------|--------------|
+| 처리량     | 초당 5,907 요청 | 초당 96,115 요청 |
+| 데이터 전송  | 초당 1MB      | 초당 21MB      |
+| 지연 시간   | 52ms        | 12ms         |
+| Timeout | 456건        | 0건           |
+
+### 단일 프로세스 벤치마크
+
+```
+Running 30s test @ http://localhost:3000
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    69.20ms   52.48ms   1.98s    98.55%
+    Req/Sec   645.57    475.44     3.04k    72.19%
+  177758 requests in 30.09s, 40.52MB read
+  Socket errors: connect 0, read 0, write 0, timeout 456
+Requests/sec:   5907.92
+Transfer/sec:      1.35MB
+```
+
+### 클러스터 모드 벤치마크
+
+```
+Running 30s test @ http://localhost:3000
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    12.24ms   11.62ms 242.57ms   91.25%
+    Req/Sec     8.06k     1.13k   18.13k    77.09%
+  2892257 requests in 30.09s, 659.23MB read
+Requests/sec:  96115.21
+Transfer/sec:     21.91MB
+```
+
+### CPU 사용량 비교
+
+![단일 프로세스 CPU 사용량](/posts/3/normal-mode-wrk-result.png)
+
+단일 프로세스 모드에서는 CPU 사용량이 최대 2%에 그쳤습니다.
+
+![클러스터 모드 CPU 사용량](/posts/3/cluster-mode-wrk-result.png)
+
+반면, 클러스터 모드 사용 시 대부분의 CPU가 활발히 사용되고 있는 모습을 확인할 수 있습니다.
+
+## 결론
+
+현대의 CPU들은 대부분 멀티코어라 CPU를 100% 활용하기 위해서는 따로 프로그래밍적인 처리가 필요하지만,
+PM2를 활용하면, 손쉽게 Node.js 환경에서 돌아가는 서버가 모든 CPU 자원을 활용할 수 있도록 할 수 있습니다.
+트래픽이 올라가면 생각없이 Scale Up 하기보다는, CPU 점유율 등을 고려야여 적절한 판단을 내리는 것이 중요할 것 같습니다.
+읽어주셔서 감사합니다.
