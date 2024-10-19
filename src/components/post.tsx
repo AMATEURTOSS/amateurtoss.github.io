@@ -9,7 +9,7 @@ export function Post ({ title, description = '', createdAt, href = '/' }: Post) 
           {title}
         </span>
         <span>{'-'}</span>
-        <span className='text-xs tracking-tight text-foreground'>
+        <span className='text-xs tracking-tight text-foreground flex-shrink-0'>
           {createdAt}
         </span>
       </Link>
