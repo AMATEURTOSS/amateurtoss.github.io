@@ -4,7 +4,7 @@ import { Header } from '@/components/header'
 
 export default function Home() {
   return (
-    <div className='prose container flex flex-col items-center min-h-screen mx-auto py-8'>
+    <div className='prose container flex flex-col items-center min-h-screen mx-auto p-8'>
       <Header />
       <main>
         <article>
