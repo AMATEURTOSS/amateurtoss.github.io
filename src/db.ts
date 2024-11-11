@@ -7,6 +7,11 @@ export type Post = {
 
 export const posts: Post[] = [
   {
+    title: '오랜 시간이 걸리는 API를 처리하는 가장 간단한 방법',
+    createdAt: '2024-11-11',
+    href: '/posts/4'
+  },
+  {
     title: 'Node.js, 싱글 스레드 약점 극복하기 (PM2)',
     createdAt: '2024-10-19',
     href: '/posts/3'

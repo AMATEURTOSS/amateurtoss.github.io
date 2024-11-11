@@ -1,0 +1,70 @@
+# 오랜 시간이 걸리는 API를 처리하는 가장 간단한 방법
+
+API 개발하다 보면 처리 시간이 오래 걸리는 엔드포인트를 만나게 됩니다. 데이터 크기가 크거나, 여러 시스템이 얽혀있거나, 아니면 그냥 느린 외부 API를 호출해야 할 때도 있습니다.
+
+문제는 이런 느린 API가 서비스 전체 성능에 영향을 준다는 거예요. 사용자는 마냥 기다리지 않습니다. 스피너가 빙글빙글 돌아가는 동안 다들 뒤로가기를 누르고 있겠죠.
+
+이런 상황에서 우리가 할 수 있는 간단한 해결책을 정리해봤습니다.
+
+## 전체적인 구조
+
+1. 클라이언트가 요청을 보내면 서버에서 작업을 시작함과 동시에 202 Accepted 를 반환한다.
+2. 클라이언트에서는 상태를 확인할 수 있는 endpoint를 통해 상태를 주기적으로 확인하고, 클라이언트를 업데이트한다. (polling 방식)
+
+아래에서는 비디오 업로드 (업로드 후 최적화) 를 예로 코드를 작성해보겠습니다.
+
+## 서버 측 코드
+
+```javascript
+const progressMap = {}
+
+async function createVideo ({ name }) {
+    return await db.video.insertOne({ name })
+}
+
+async function processingVideoResolution ({ id }) {
+    for (let i = 0; i < 100; ++i) {
+        sleep(1000)
+        progressMap[id] = (progressMap[id] ?? 0) + 1
+    }
+}
+
+router.post('/video', async (req, res) => {
+    const video = await createVideo(req.body)
+    processingVideoResolution(video).catch(console.error) // 비동기 작업을 기다리지 않음
+    res.status(202).json(video)
+})
+
+router.get('/status/:id', async (req, res) => {
+    res.json({ progress: progressMap[req.params.id] })
+})
+```
+
+서버에서는 `POST /video` 요청이 들어오는 즉시 202를 반환하고, 백그라운드에서 비디오 해상도 처리를 진행합니다.
+백그라운드에서 처리가 진행되면서, progressMap에 video의 진행도를 저장하는데 이 진행도는 `GET /status/:id` 엔드포인트를 통해 확인할 수 있습니다.
+
+> ⚠️ 편의를 위해 progressMap을 변수로 만들었지만, 실제 프로덕션 환경에서는 Redis를 사용하거나 진행도를 DB에 넣는 등의 고민이 필요합니다.
+
+## 클라이언트 측 코드
+
+```javascript
+const { data: video } = await axios.post('/video')
+
+const interval = setInterval(async () => {
+    const { data } = await axios.get(`/status/${video.id}`)
+    const { progress } = data
+    setProgress(progress)
+
+    if (progress === 100) clearInterval(interval)
+}, 1000)
+```
+
+클라이언트에서는 video 생성 API를 호출, interval을 통해 주기적으로 진행도를 갱신합니다.
+
+## 결론
+
+긴 시간이 필요한 API를 처리하는 가장 간단한 방법을 알아보았습니다. 202 응답 코드와 폴링을 활용하면, 복잡한 웹소켓이나 메시징 시스템 없이도 비동기 작업을 깔끔하게 처리할 수 있습니다.
+
+물론 이 방식에도 한계가 있습니다. 주기적인 폴링은 서버에 불필요한 부하를 줄 수 있고, 실시간성이 떨어질 수 있죠. 규모가 커진다면 웹소켓이나 메시지 큐 같은 더 견고한 해결책을 고려해야 할 수도 있습니다.
+
+하지만 작은 규모의 프로젝트나 빠른 프로토타입이 필요한 상황이라면, 이런 간단한 방식으로도 충분히 실용적인 해결이 가능합니다. 때로는 단순한 해결책이 가장 좋은 해결책이 되기도 하니까요.
