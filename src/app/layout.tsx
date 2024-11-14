@@ -4,6 +4,9 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Blog',
+  verification: {
+    google: 'OwHKPNKdBwgpiIeHCPodU73heHdBhAoM7A9AphpQxbI'
+  },
 }
 
 export default function RootLayout({ children }: PropsWithChildren) {
